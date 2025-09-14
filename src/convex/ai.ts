@@ -20,7 +20,7 @@ export const checkLiveStatus = action({
     }
 
     const model =
-      process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-thinking-exp:free";
+      process.env.OPENROUTER_MODEL || "anthropic/claude-3-haiku";
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${apiKey}`,
