@@ -25,6 +25,7 @@ export default function Dashboard() {
   const [aiStatus, setAiStatus] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [selectedBridge, setSelectedBridge] = useState<string | null>(null);
+  const [isFindingSpot, setIsFindingSpot] = useState<boolean>(false);
 
   // Add: lightweight engagement + celebration states
   const [streak, setStreak] = useState<number>(0);
@@ -77,6 +78,11 @@ export default function Dashboard() {
       toast.error("Please select a destination station");
       return;
     }
+
+    // prevent duplicate taps
+    if (isFindingSpot) return;
+    setIsFindingSpot(true);
+
     // Streak tracking: increments only on a new day
     const today = new Date().toDateString();
     let nextStreak = streak;
@@ -91,11 +97,15 @@ export default function Dashboard() {
       }
     }
 
-    setShowResults(true);
+    // slight delay to show progress and feel responsive
     setAiStatus(null);
-    setCelebrate(true);
-    setTimeout(() => setCelebrate(false), 1400);
-    toast.success("Found your optimal spot!");
+    setTimeout(() => {
+      setShowResults(true);
+      setCelebrate(true);
+      setTimeout(() => setCelebrate(false), 1400);
+      toast.success("Found your optimal spot!");
+      setIsFindingSpot(false);
+    }, 500);
   };
 
   const handleVerifyHelpful = async () => {
@@ -459,11 +469,20 @@ export default function Dashboard() {
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   onClick={handleFindSpot}
-                  disabled={!selectedStationId}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold py-3 text-base md:text-lg shadow-lg"
+                  disabled={!selectedStationId || isFindingSpot}
+                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold py-3 text-base md:text-lg shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <Train className="mr-2 h-5 w-5" />
-                  Find My Spot
+                  {isFindingSpot ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Finding your spot...
+                    </>
+                  ) : (
+                    <>
+                      <Train className="mr-2 h-5 w-5" />
+                      Find My Spot
+                    </>
+                  )}
                 </Button>
               </motion.div>
             </CardContent>
