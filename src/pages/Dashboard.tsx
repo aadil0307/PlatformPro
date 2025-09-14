@@ -1,0 +1,374 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { motion, AnimatePresence } from "framer-motion";
+import { Train, MapPin, Users, Crown, ThumbsUp, ThumbsDown, Loader2, Sparkles, Navigation } from "lucide-react";
+import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { toast } from "sonner";
+
+type CoachType = "general" | "ladies" | "firstClass";
+
+export default function Dashboard() {
+  const [selectedRouteId, setSelectedRouteId] = useState<Id<"routes"> | null>(null);
+  const [selectedStationId, setSelectedStationId] = useState<Id<"stations"> | null>(null);
+  const [coachType, setCoachType] = useState<CoachType>("general");
+  const [showResults, setShowResults] = useState(false);
+  const [aiStatus, setAiStatus] = useState<string | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+
+  const routes = useQuery(api.routes.getAllRoutes);
+  const stations = useQuery(
+    api.stations.getStationsByRoute,
+    selectedRouteId ? { routeId: selectedRouteId } : "skip"
+  );
+  const selectedStation = useQuery(
+    api.stations.getStationById,
+    selectedStationId ? { stationId: selectedStationId } : "skip"
+  );
+
+  const incrementVerified = useMutation(api.stations.incrementVerifiedCount);
+  const addFeedback = useMutation(api.stations.addStationFeedback);
+
+  const handleFindSpot = () => {
+    if (!selectedStationId) {
+      toast.error("Please select a destination station");
+      return;
+    }
+    setShowResults(true);
+    setAiStatus(null);
+    toast.success("Found your optimal spot!");
+  };
+
+  const handleVerifyHelpful = async () => {
+    if (!selectedStationId) return;
+    
+    try {
+      await incrementVerified({ stationId: selectedStationId });
+      await addFeedback({ stationId: selectedStationId, isHelpful: true });
+      toast.success("Thanks for your feedback!");
+    } catch (error) {
+      toast.error("Failed to submit feedback");
+    }
+  };
+
+  const handleCheckLiveStatus = async () => {
+    if (!selectedStation || !routes) return;
+    
+    setIsLoadingAI(true);
+    const route = routes.find(r => r._id === selectedStation.routeId);
+    
+    // Simulate AI response (in real app, this would call Gemini API)
+    setTimeout(() => {
+      const responses = [
+        `AI Update: ${route?.name} is running on time. Normal crowd levels expected at ${selectedStation.name}. Best time to board: Next 10 minutes.`,
+        `AI Update: Minor delays (5-10 mins) reported on ${route?.name} towards ${selectedStation.name} due to signal issues at previous station. Plan accordingly.`,
+        `AI Update: Heavy rush hour traffic on ${route?.name}. Consider using coach ${selectedStation.exitCoaches[coachType]} for faster exit at ${selectedStation.name}.`,
+        `AI Update: ${route?.name} services are running smoothly. ${selectedStation.name} platform is moderately crowded. Optimal boarding window available.`,
+      ];
+      
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      setAiStatus(randomResponse);
+      setIsLoadingAI(false);
+      toast.success("AI status updated!");
+    }, 2000);
+  };
+
+  const getCoachTypeLabel = (type: CoachType) => {
+    switch (type) {
+      case "general": return "General";
+      case "ladies": return "Ladies";
+      case "firstClass": return "First Class";
+    }
+  };
+
+  const getCoachTypeIcon = (type: CoachType) => {
+    switch (type) {
+      case "general": return <Users className="h-4 w-4" />;
+      case "ladies": return <Users className="h-4 w-4 text-pink-500" />;
+      case "firstClass": return <Crown className="h-4 w-4 text-yellow-500" />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 relative overflow-hidden">
+      {/* Glassmorphism background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-300/15 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-8 max-w-md">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">
+            Platform Pro 🚂
+          </h1>
+          <p className="text-white/90 text-lg">
+            Your guide to winning the daily commute.
+          </p>
+        </motion.div>
+
+        {/* Controls Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl mb-6">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Navigation className="h-5 w-5" />
+                Plan Your Journey
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Train Line Selection */}
+              <div className="space-y-2">
+                <label className="text-white/90 text-sm font-medium">Train Line</label>
+                <Select
+                  value={selectedRouteId || ""}
+                  onValueChange={(value) => {
+                    setSelectedRouteId(value as Id<"routes">);
+                    setSelectedStationId(null);
+                    setShowResults(false);
+                  }}
+                >
+                  <SelectTrigger className="bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                    <SelectValue placeholder="Select train line" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {routes?.map((route) => (
+                      <SelectItem key={route._id} value={route._id}>
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: route.color }}
+                          />
+                          {route.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Destination Station Selection */}
+              <div className="space-y-2">
+                <label className="text-white/90 text-sm font-medium">Destination Station</label>
+                <Select
+                  value={selectedStationId || ""}
+                  onValueChange={(value) => {
+                    setSelectedStationId(value as Id<"stations">);
+                    setShowResults(false);
+                  }}
+                  disabled={!selectedRouteId}
+                >
+                  <SelectTrigger className="bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                    <SelectValue placeholder="Select destination" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {stations?.map((station) => (
+                      <SelectItem key={station._id} value={station._id}>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          {station.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Coach Type Selection */}
+              <div className="space-y-3">
+                <label className="text-white/90 text-sm font-medium">Coach Type</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["general", "ladies", "firstClass"] as CoachType[]).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setCoachType(type)}
+                      className={`p-3 rounded-lg border backdrop-blur-sm transition-all ${
+                        coachType === type
+                          ? "bg-white/30 border-white/50 text-white"
+                          : "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-1">
+                        {getCoachTypeIcon(type)}
+                        <span className="text-xs font-medium">
+                          {getCoachTypeLabel(type)}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Find My Spot Button */}
+              <Button
+                onClick={handleFindSpot}
+                disabled={!selectedStationId}
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 text-lg shadow-lg"
+              >
+                <Train className="mr-2 h-5 w-5" />
+                Find My Spot
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Results Section */}
+        <AnimatePresence>
+          {showResults && selectedStation && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    Your Optimal Spot
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Platform Info */}
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-white mb-2">
+                      {selectedStation.platformInfo}
+                    </div>
+                    <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2">
+                      Best Coach: {selectedStation.exitCoaches[coachType]}
+                    </Badge>
+                  </div>
+
+                  <Separator className="bg-white/20" />
+
+                  {/* Pro Tip */}
+                  <div className="bg-white/10 rounded-lg p-4 border border-white/20">
+                    <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      Pro Tip
+                    </h4>
+                    <p className="text-white/90 text-sm leading-relaxed">
+                      {selectedStation.bridgeInfo}
+                    </p>
+                  </div>
+
+                  {/* Verification Section */}
+                  <div className="bg-white/10 rounded-lg p-4 border border-white/20">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-white/90 text-sm">Was this info correct?</span>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={handleVerifyHelpful}
+                          className="text-white hover:bg-white/20 p-2"
+                        >
+                          <ThumbsUp className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-white hover:bg-white/20 p-2"
+                        >
+                          <ThumbsDown className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <span className="text-green-300 text-sm">
+                        ✅ {selectedStation.verifiedCount} commuters found this helpful
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* AI Live Status */}
+                  <div className="space-y-3">
+                    <Button
+                      onClick={handleCheckLiveStatus}
+                      disabled={isLoadingAI}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                    >
+                      {isLoadingAI ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Getting AI Update...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Check Live Status 🤖
+                        </>
+                      )}
+                    </Button>
+
+                    <AnimatePresence>
+                      {isLoadingAI && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="bg-white/10 rounded-lg p-4 border border-white/20"
+                        >
+                          <div className="flex items-center gap-2 text-white/90">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span className="text-sm">Asking our AI for real-time updates...</span>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {aiStatus && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg p-4 border border-blue-300/30"
+                        >
+                          <p className="text-white text-sm leading-relaxed">
+                            {aiStatus}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Initial State Message */}
+        {!showResults && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center"
+          >
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-xl">
+              <CardContent className="py-8">
+                <Train className="h-12 w-12 text-white/60 mx-auto mb-4" />
+                <p className="text-white/80 text-lg">
+                  Select your route to begin your journey
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}

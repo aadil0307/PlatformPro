@@ -32,12 +32,37 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
-    // add other tables here
+    // Train routes (Western, Central, Harbour lines)
+    routes: defineTable({
+      name: v.string(), // "Western Line", "Central Line", "Harbour Line"
+      code: v.string(), // "WR", "CR", "HR"
+      color: v.string(), // hex color for the line
+      isActive: v.boolean(),
+    }),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    // Stations for each route
+    stations: defineTable({
+      routeId: v.id("routes"),
+      name: v.string(), // "Andheri", "Bandra", etc.
+      code: v.string(), // "ADH", "BND", etc.
+      platformInfo: v.string(), // "Platform 1 (Left Side)"
+      exitCoaches: v.object({
+        general: v.number(), // best coach for general
+        ladies: v.number(), // best coach for ladies
+        firstClass: v.number(), // best coach for first class
+      }),
+      bridgeInfo: v.string(), // pro tip about exits/connections
+      verifiedCount: v.number(), // crowd-sourced verification count
+      order: v.number(), // station order on the line
+    }).index("by_route", ["routeId"]),
+
+    // User feedback for stations
+    stationFeedback: defineTable({
+      stationId: v.id("stations"),
+      userId: v.optional(v.id("users")),
+      isHelpful: v.boolean(), // true for thumbs up, false for thumbs down
+      timestamp: v.number(),
+    }).index("by_station", ["stationId"]),
   },
   {
     schemaValidation: false,

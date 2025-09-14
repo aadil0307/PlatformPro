@@ -1,43 +1,242 @@
-// TODO: REPLACE THIS LANDING PAGE WITH AN ELEGANT, THEMATIC, AND WELL-DESIGNED LANDING PAGE RELEVANT TO THE PROJECT
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { Loader } from "lucide-react";
+import { Train, MapPin, Clock, Users, Sparkles, Navigation, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function Landing() {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col"
-    >
+  const { isLoading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="max-w-5xl mx-auto relative px-4">
-        {/* TODO: landing page goes here; replace with the landing page */}
-        <div className="flex justify-center">
-          <img
-            src="./logo.svg"
-            alt="Lock Icon"
-            width={64}
-            height={64}
-            className="rounded-lg mb-8 mt-24"
-          />
-        </div>
-        <div className="flex items-center justify-center">
-          <Loader className="h-8 w-8 animate-spin mr-4" />
-          <a
-            href="https://vly.ai"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline hover:text-primary/80 transition-colors"
-          >
-            vly.ai
-          </a>&nbsp; is generating your project...
-        </div>
-        </div>
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      navigate("/auth");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+        <div className="text-white text-xl">Loading...</div>
       </div>
-    </motion.div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 relative overflow-hidden">
+      {/* Glassmorphism background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-300/15 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-12 max-w-4xl">
+        {/* Hero Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <div className="flex justify-center mb-8">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="relative"
+            >
+              <div className="w-24 h-24 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center border border-white/30 shadow-2xl">
+                <Train className="h-12 w-12 text-white" />
+              </div>
+              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-yellow-800" />
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight"
+          >
+            Platform Pro 🚂
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed"
+          >
+            Your guide to winning the daily commute.<br />
+            <span className="text-lg text-white/80">Navigate Mumbai's local trains like a pro</span>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Button
+              onClick={handleGetStarted}
+              size="lg"
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all duration-200"
+            >
+              {isAuthenticated ? (
+                <>
+                  <Navigation className="mr-2 h-5 w-5" />
+                  Go to Dashboard
+                </>
+              ) : (
+                <>
+                  Get Started
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </>
+              )}
+            </Button>
+          </motion.div>
+        </motion.div>
+
+        {/* Features Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+        >
+          {[
+            {
+              icon: <MapPin className="h-8 w-8 text-blue-400" />,
+              title: "Smart Platform Guide",
+              description: "Find the exact platform and coach for your destination"
+            },
+            {
+              icon: <Clock className="h-8 w-8 text-green-400" />,
+              title: "Real-time Updates",
+              description: "AI-powered live status and delay information"
+            },
+            {
+              icon: <Users className="h-8 w-8 text-purple-400" />,
+              title: "Crowd-sourced Tips",
+              description: "Verified by thousands of daily commuters"
+            },
+            {
+              icon: <Sparkles className="h-8 w-8 text-yellow-400" />,
+              title: "Pro Tips",
+              description: "Insider knowledge for faster exits and connections"
+            }
+          ].map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 + index * 0.1 }}
+            >
+              <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 h-full">
+                <CardContent className="p-6 text-center">
+                  <div className="flex justify-center mb-4">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-white font-semibold text-lg mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-white/80 text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* How it Works */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl font-bold text-white mb-8">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                step: "1",
+                title: "Select Your Route",
+                description: "Choose your train line and destination station"
+              },
+              {
+                step: "2", 
+                title: "Get Your Spot",
+                description: "Find the optimal coach and platform position"
+              },
+              {
+                step: "3",
+                title: "Travel Smart",
+                description: "Use AI updates and pro tips for the best journey"
+              }
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 + index * 0.2 }}
+                className="relative"
+              >
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+                  <span className="text-2xl font-bold text-white">{step.step}</span>
+                </div>
+                <h3 className="text-white font-semibold text-xl mb-2">{step.title}</h3>
+                <p className="text-white/80">{step.description}</p>
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-8 left-full w-full">
+                    <ArrowRight className="h-6 w-6 text-white/40 mx-auto" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5 }}
+          className="text-center"
+        >
+          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
+            <CardContent className="p-8">
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Ready to Master Your Commute?
+              </h2>
+              <p className="text-white/90 text-lg mb-6">
+                Join thousands of smart commuters who never miss their stop
+              </p>
+              <Button
+                onClick={handleGetStarted}
+                size="lg"
+                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-xl"
+              >
+                {isAuthenticated ? (
+                  <>
+                    <Navigation className="mr-2 h-5 w-5" />
+                    Go to Dashboard
+                  </>
+                ) : (
+                  <>
+                    Start Your Journey
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
   );
 }
