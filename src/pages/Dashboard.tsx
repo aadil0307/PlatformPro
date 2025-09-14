@@ -217,7 +217,7 @@ export default function Dashboard() {
 
       {/* Responsive Navbar */}
       <div className="relative z-10">
-        <div className="w-full px-4 pt-4">
+        <div className="w-full px-3 pt-3 md:px-4 md:pt-4">
           <div className="mx-auto max-w-sm md:max-w-md">
             <div className="flex items-center justify-between rounded-xl border border-white/20 bg-white/10 backdrop-blur-md px-3 py-2">
               <button
@@ -281,7 +281,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-3 py-6 max-w-sm md:max-w-md">
+      <div className="relative z-10 container mx-auto px-3 py-4 md:py-6 max-w-sm md:max-w-md">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -333,7 +333,7 @@ export default function Dashboard() {
                 Plan Your Journey
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-5 md:space-y-6">
               {/* Train Line Selection */}
               <div className="space-y-2">
                 <label className="text-white/90 text-sm font-medium">Train Line</label>
@@ -430,7 +430,7 @@ export default function Dashboard() {
               {/* Coach Type Selection */}
               <div className="space-y-3">
                 <label className="text-white/90 text-sm font-medium">Coach Type</label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 md:gap-3">
                   {(["general", "ladies", "firstClass"] as CoachType[]).map((type) => (
                     <motion.button
                       key={type}
@@ -438,7 +438,7 @@ export default function Dashboard() {
                       whileTap={{ scale: 0.95 }}
                       animate={{ scale: coachType === type ? 1.03 : 1 }}
                       transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                      className={`py-3 px-2 rounded-lg border backdrop-blur-sm transition-all ${
+                      className={`py-3.5 md:py-3 px-2.5 rounded-lg border backdrop-blur-sm transition-all ${
                         coachType === type
                           ? "bg-white/30 border-white/50 text-white shadow-inner"
                           : "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
@@ -460,7 +460,7 @@ export default function Dashboard() {
                 <Button
                   onClick={handleFindSpot}
                   disabled={!selectedStationId}
-                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 text-lg shadow-lg"
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 text-base md:text-lg shadow-lg"
                 >
                   <Train className="mr-2 h-5 w-5" />
                   Find My Spot
@@ -649,7 +649,7 @@ export default function Dashboard() {
             className="text-center"
           >
             <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-xl">
-              <CardContent className="py-8">
+              <CardContent className="py-6 md:py-8">
                 <Train className="h-12 w-12 text-white/60 mx-auto mb-4" />
                 <p className="text-white/80 text-lg">
                   Select your route to begin your journey

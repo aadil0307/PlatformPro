@@ -34,12 +34,12 @@ export default function Landing() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-300/15 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-12 max-w-4xl">
+      <div className="relative z-10 container mx-auto px-3 py-8 md:py-12 max-w-4xl">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-16"
         >
           <div className="flex justify-center mb-8">
             <motion.div
@@ -48,7 +48,7 @@ export default function Landing() {
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
               className="relative"
             >
-              <div className="w-24 h-24 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center border border-white/30 shadow-2xl">
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center border border-white/30 shadow-2xl">
                 <Train className="h-12 w-12 text-white" />
               </div>
               <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
@@ -61,7 +61,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight"
+            className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight"
           >
             Platform Pro 🚂
           </motion.h1>
@@ -70,7 +70,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed"
+            className="text-lg md:text-2xl text-white/90 mb-8 leading-relaxed"
           >
             Your guide to winning the daily commute.<br />
             <span className="text-lg text-white/80">Navigate Mumbai's local trains like a pro</span>
@@ -84,7 +84,7 @@ export default function Landing() {
             <Button
               onClick={handleGetStarted}
               size="lg"
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all duration-200"
+              className="w-full md:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all duration-200"
             >
               {isAuthenticated ? (
                 <>
@@ -106,7 +106,7 @@ export default function Landing() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10 md:mb-16"
         >
           {[
             {
@@ -137,7 +137,7 @@ export default function Landing() {
               transition={{ delay: 0.7 + index * 0.1 }}
             >
               <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-xl hover:bg-white/15 transition-all duration-300 h-full">
-                <CardContent className="p-6 text-center">
+                <CardContent className="p-5 md:p-6 text-center">
                   <div className="flex justify-center mb-4">
                     {feature.icon}
                   </div>
@@ -158,7 +158,7 @@ export default function Landing() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
           <h2 className="text-3xl font-bold text-white mb-8">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -186,8 +186,8 @@ export default function Landing() {
                 transition={{ delay: 1.1 + index * 0.2 }}
                 className="relative"
               >
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
-                  <span className="text-2xl font-bold text-white">{step.step}</span>
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-white/20 backdrop-blur-lg rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+                  <span className="text-xl md:text-2xl font-bold text-white">{step.step}</span>
                 </div>
                 <h3 className="text-white font-semibold text-xl mb-2">{step.title}</h3>
                 <p className="text-white/80">{step.description}</p>
@@ -209,7 +209,7 @@ export default function Landing() {
           className="text-center"
         >
           <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
-            <CardContent className="p-8">
+            <CardContent className="p-6 md:p-8">
               <h2 className="text-3xl font-bold text-white mb-4">
                 Ready to Master Your Commute?
               </h2>
@@ -219,7 +219,7 @@ export default function Landing() {
               <Button
                 onClick={handleGetStarted}
                 size="lg"
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-xl"
+                className="w-full md:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-xl"
               >
                 {isAuthenticated ? (
                   <>
