@@ -190,7 +190,7 @@ export default function Dashboard() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 relative overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* Celebration overlay: quick emoji burst */}
       <AnimatePresence>
         {celebrate && (
@@ -201,7 +201,7 @@ export default function Dashboard() {
             className="pointer-events-none fixed inset-0 z-[60] flex items-start justify-center pt-20"
           >
             <div className="relative">
-              {[ "🎉","✨","🚆","🌟","🎊" ].map((emo, i) => (
+              {["🎉","✨","🚆","🌟","🎊"].map((emo, i) => (
                 <motion.span
                   key={i}
                   initial={{ y: 10, opacity: 0, scale: 0.8 }}
@@ -265,11 +265,12 @@ export default function Dashboard() {
                       <Menu className="h-5 w-5" />
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="right" className="backdrop-blur-xl bg-white/10 border-white/20">
+                  <SheetContent side="right" className="backdrop-blur-xl bg-white/10 border-white/20 w-[85vw] sm:w-[380px] p-4">
                     <div className="mt-8 flex flex-col gap-2">
                       <Button
                         variant="ghost"
-                        className="justify-start text-white hover:bg-white/20"
+                        size="lg"
+                        className="justify-start text-white hover:bg-white/20 py-3"
                         onClick={() => navigate("/")}
                       >
                         <Home className="h-4 w-4 mr-2" />
@@ -277,7 +278,8 @@ export default function Dashboard() {
                       </Button>
                       <Button
                         variant="ghost"
-                        className="justify-start text-white hover:bg-white/20"
+                        size="lg"
+                        className="justify-start text-white hover:bg-white/20 py-3"
                         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                       >
                         Plan Journey

@@ -27,7 +27,7 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 relative overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {/* Glassmorphism background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -91,12 +91,13 @@ export default function Landing() {
                   </SheetTrigger>
                   <SheetContent
                     side="right"
-                    className="backdrop-blur-xl bg-white/10 border-white/20"
+                    className="backdrop-blur-xl bg-white/10 border-white/20 w-[85vw] sm:w-[380px] p-4"
                   >
                     <div className="mt-8 flex flex-col gap-2">
                       <Button
                         variant="ghost"
-                        className="justify-start text-white hover:bg-white/20"
+                        size="lg"
+                        className="justify-start text-white hover:bg-white/20 py-3"
                         onClick={() => navigate("/")}
                       >
                         Home
@@ -104,7 +105,8 @@ export default function Landing() {
                       {isAuthenticated ? (
                         <Button
                           variant="ghost"
-                          className="justify-start text-white hover:bg-white/20"
+                          size="lg"
+                          className="justify-start text-white hover:bg-white/20 py-3"
                           onClick={() => navigate("/dashboard")}
                         >
                           Dashboard
@@ -112,7 +114,8 @@ export default function Landing() {
                       ) : (
                         <Button
                           variant="ghost"
-                          className="justify-start text-white hover:bg-white/20"
+                          size="lg"
+                          className="justify-start text-white hover:bg-white/20 py-3"
                           onClick={() => navigate("/auth")}
                         >
                           Get Started
