@@ -132,7 +132,7 @@ export default function Dashboard() {
       {/* Responsive Navbar */}
       <div className="relative z-10">
         <div className="w-full px-4 pt-4">
-          <div className="mx-auto max-w-md">
+          <div className="mx-auto max-w-sm md:max-w-md">
             <div className="flex items-center justify-between rounded-xl border border-white/20 bg-white/10 backdrop-blur-md px-3 py-2">
               <button
                 onClick={() => navigate("/")}
@@ -195,17 +195,17 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-md">
+      <div className="relative z-10 container mx-auto px-3 py-6 max-w-sm md:max-w-md">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-6"
         >
-          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">
             Platform Pro 🚂
           </h1>
-          <p className="text-white/90 text-lg">
+          <p className="text-white/90 text-base md:text-lg">
             Your guide to winning the daily commute.
           </p>
         </motion.div>
@@ -235,7 +235,7 @@ export default function Dashboard() {
                     setShowResults(false);
                   }}
                 >
-                  <SelectTrigger className="bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                  <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm">
                     <SelectValue placeholder="Select train line" />
                   </SelectTrigger>
                   <SelectContent>
@@ -265,7 +265,7 @@ export default function Dashboard() {
                   }}
                   disabled={!selectedRouteId}
                 >
-                  <SelectTrigger className="bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                  <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm">
                     <SelectValue placeholder="Select destination" />
                   </SelectTrigger>
                   <SelectContent>
@@ -284,12 +284,12 @@ export default function Dashboard() {
               {/* Coach Type Selection */}
               <div className="space-y-3">
                 <label className="text-white/90 text-sm font-medium">Coach Type</label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-3">
                   {(["general", "ladies", "firstClass"] as CoachType[]).map((type) => (
                     <button
                       key={type}
                       onClick={() => setCoachType(type)}
-                      className={`p-3 rounded-lg border backdrop-blur-sm transition-all ${
+                      className={`py-3 px-2 rounded-lg border backdrop-blur-sm transition-all ${
                         coachType === type
                           ? "bg-white/30 border-white/50 text-white"
                           : "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
