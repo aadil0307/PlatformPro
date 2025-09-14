@@ -6,15 +6,18 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { motion, AnimatePresence } from "framer-motion";
-import { Train, MapPin, Users, Crown, ThumbsUp, ThumbsDown, Loader2, Sparkles, Navigation } from "lucide-react";
+import { Train, MapPin, Users, Crown, ThumbsUp, ThumbsDown, Loader2, Sparkles, Navigation, Home, Menu } from "lucide-react";
 import { useState } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useNavigate } from "react-router";
 
 type CoachType = "general" | "ladies" | "firstClass";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [selectedRouteId, setSelectedRouteId] = useState<Id<"routes"> | null>(null);
   const [selectedStationId, setSelectedStationId] = useState<Id<"stations"> | null>(null);
   const [coachType, setCoachType] = useState<CoachType>("general");
@@ -124,6 +127,72 @@ export default function Dashboard() {
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-300/15 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Responsive Navbar */}
+      <div className="relative z-10">
+        <div className="w-full px-4 pt-4">
+          <div className="mx-auto max-w-md">
+            <div className="flex items-center justify-between rounded-xl border border-white/20 bg-white/10 backdrop-blur-md px-3 py-2">
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center gap-2 text-white hover:text-white/90"
+              >
+                <Train className="h-5 w-5" />
+                <span className="font-semibold tracking-tight">Platform Pro</span>
+              </button>
+
+              {/* Desktop actions */}
+              <div className="hidden md:flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:bg-white/20"
+                  onClick={() => navigate("/")}
+                >
+                  <Home className="h-4 w-4 mr-2" />
+                  Home
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                >
+                  Plan
+                </Button>
+              </div>
+
+              {/* Mobile menu */}
+              <div className="md:hidden">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" className="text-white hover:bg-white/20">
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right" className="backdrop-blur-xl bg-white/10 border-white/20">
+                    <div className="mt-8 flex flex-col gap-2">
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-white hover:bg-white/20"
+                        onClick={() => navigate("/")}
+                      >
+                        <Home className="h-4 w-4 mr-2" />
+                        Home
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-white hover:bg-white/20"
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                      >
+                        Plan Journey
+                      </Button>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-md">
