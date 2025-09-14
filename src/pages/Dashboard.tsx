@@ -313,7 +313,7 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
-          className="mb-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md px-4 py-3"
+          className="mb-5 rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl px-4 md:px-5 py-3 shadow-lg"
         >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -338,7 +338,7 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl mb-6">
+          <Card className="backdrop-blur-xl bg-white/10 border-white/20 ring-1 ring-white/10 rounded-2xl shadow-2xl mb-6">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Navigation className="h-5 w-5" />
@@ -357,7 +357,7 @@ export default function Dashboard() {
                     setShowResults(false);
                   }}
                 >
-                  <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                  <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm focus:ring-2 focus:ring-indigo-300/40 focus:border-white/40 hover:bg-white/25 transition">
                     <SelectValue placeholder="Select train line" />
                   </SelectTrigger>
                   <SelectContent>
@@ -388,7 +388,7 @@ export default function Dashboard() {
                   }}
                   disabled={!selectedRouteId}
                 >
-                  <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                  <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm focus:ring-2 focus:ring-indigo-300/40 focus:border-white/40 hover:bg-white/25 transition">
                     <SelectValue placeholder="Select destination" />
                   </SelectTrigger>
                   <SelectContent>
@@ -421,7 +421,7 @@ export default function Dashboard() {
                             setShowResults(false);
                           }}
                         >
-                          <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                          <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm focus:ring-2 focus:ring-indigo-300/40 focus:border-white/40 hover:bg-white/25 transition">
                             <SelectValue placeholder="Select bridge" />
                           </SelectTrigger>
                           <SelectContent>
@@ -452,8 +452,8 @@ export default function Dashboard() {
                       transition={{ type: "spring", stiffness: 260, damping: 20 }}
                       className={`py-3.5 md:py-3 px-2.5 rounded-lg border backdrop-blur-sm transition-all ${
                         coachType === type
-                          ? "bg-white/30 border-white/50 text-white shadow-inner"
-                          : "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
+                          ? "bg-white/30 border-white/50 text-white shadow-inner ring-2 ring-white/40"
+                          : "bg-white/10 border-white/20 text-white/85 hover:bg-white/20 hover:border-white/30"
                       }`}
                     >
                       <div className="flex flex-col items-center gap-1">
@@ -472,7 +472,7 @@ export default function Dashboard() {
                 <Button
                   onClick={handleFindSpot}
                   disabled={!selectedStationId || isFindingSpot}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold py-3 text-base md:text-lg shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold py-3 text-base md:text-lg shadow-lg disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-indigo-300/40"
                 >
                   {isFindingSpot ? (
                     <>
@@ -493,7 +493,7 @@ export default function Dashboard() {
 
         {/* Results Modal */}
         <Dialog open={showResults && !!selectedStation} onOpenChange={setShowResults}>
-          <DialogContent className="max-w-md w-[95%] p-0 backdrop-blur-xl bg-white/10 border-white/20">
+          <DialogContent className="max-w-md w[95%] p-0 backdrop-blur-2xl bg-white/10 border-white/20 ring-1 ring-white/10 rounded-2xl">
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -532,7 +532,7 @@ export default function Dashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2">
+                    <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2 rounded-full shadow">
                       {(() => {
                         const bd = (selectedStation as any)?.bridgeData;
                         const coaches =
@@ -557,7 +557,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.12 }}
-                  className="bg-white/10 rounded-lg p-4 border border-white/20"
+                  className="bg-white/10 rounded-xl p-4 border border-white/15 shadow-sm"
                 >
                   <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
@@ -579,7 +579,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.14 }}
-                  className="bg-white/10 rounded-lg p-4 border border-white/20"
+                  className="bg-white/10 rounded-xl p-4 border border-white/15 shadow-sm"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-white/90 text-sm">Was this info correct?</span>
@@ -634,7 +634,7 @@ export default function Dashboard() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="bg-white/10 rounded-lg p-4 border border-white/20"
+                        className="bg-white/10 rounded-xl p-4 border border-white/20 backdrop-blur-xl"
                       >
                         <div className="flex items-center gap-2 text-white/90">
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -669,7 +669,7 @@ export default function Dashboard() {
             transition={{ delay: 0.3 }}
             className="text-center"
           >
-            <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-xl">
+            <Card className="backdrop-blur-lg bg-white/10 border-white/20 ring-1 ring-white/10 rounded-2xl shadow-xl">
               <CardContent className="py-6 md:py-8">
                 <Train className="h-12 w-12 text-white/60 mx-auto mb-4" />
                 <p className="text-white/80 text-lg">
