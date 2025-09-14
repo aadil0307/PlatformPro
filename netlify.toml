@@ -1,0 +1,15 @@
+[build]
+  publish = "dist"
+  command = "pnpm build"
+
+[build.environment]
+  VITE_CONVEX_URL = "https://robust-spaniel-598.convex.cloud"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[dev]
+  command = "pnpm dev"
+  port = 5173
