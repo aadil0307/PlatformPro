@@ -19,11 +19,9 @@ export const checkLiveStatus = action({
       throw new Error("OpenRouter API key not configured. Please add OPENROUTER_API_KEY in Integrations.");
     }
 
-    // Add: allow model override via env, default to a fast/free option
     const model =
       process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-thinking-exp:free";
 
-    // Add: optional headers for OpenRouter rankings
     const headers: Record<string, string> = {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
@@ -50,30 +48,73 @@ Include:
 Keep it to 1-2 sentences, friendly tone, no markdown.
 `.trim();
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        // Replace: use env-configurable model
-        model,
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 180,
-      }),
-    });
+    // Add robust error handling and timeout for the OpenRouter request
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000); // 12s timeout
 
-    if (!response.ok) {
-      const text = await response.text().catch(() => "");
-      throw new Error(`OpenRouter request failed (${response.status}): ${text || response.statusText}`);
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.7,
+          max_tokens: 180,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        // Try to extract meaningful error from body
+        let detail = "";
+        try {
+          const errJson = await response.json();
+          detail = errJson?.error?.message || JSON.stringify(errJson);
+        } catch {
+          try {
+            detail = await response.text();
+          } catch {
+            detail = response.statusText;
+          }
+        }
+        const prefix =
+          response.status === 401
+            ? "Authentication failed with OpenRouter."
+            : response.status === 429
+            ? "OpenRouter rate limit hit."
+            : response.status === 400
+            ? "Bad request to OpenRouter."
+            : `OpenRouter request failed (${response.status}).`;
+        throw new Error(`${prefix} ${detail || ""}`.trim());
+      }
+
+      // Parse JSON safely
+      let data: any;
+      try {
+        data = await response.json();
+      } catch (e) {
+        throw new Error("Failed to parse OpenRouter response JSON.");
+      }
+
+      const content =
+        data?.choices?.[0]?.message?.content ||
+        "AI Update: Unable to fetch live status at the moment. Try again shortly.";
+      return content as string;
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        throw new Error("OpenRouter request timed out. Please try again.");
+      }
+      const msg =
+        typeof err?.message === "string"
+          ? err.message
+          : "Unexpected error occurred while contacting OpenRouter.";
+      throw new Error(msg);
+    } finally {
+      clearTimeout(timeout);
     }
-
-    const data = await response.json();
-    const content =
-      data?.choices?.[0]?.message?.content ||
-      "AI Update: Unable to fetch live status at the moment. Try again shortly.";
-    return content as string;
   },
 });

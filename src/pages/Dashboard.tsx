@@ -46,25 +46,41 @@ export default function Dashboard() {
   };
 
   const handleVerifyHelpful = async () => {
-    if (!selectedStationId) return;
+    if (!selectedStationId) {
+      toast.error("Please select a station before submitting feedback.");
+      return;
+    }
     
     try {
       await incrementVerified({ stationId: selectedStationId });
       await addFeedback({ stationId: selectedStationId, isHelpful: true });
       toast.success("Thanks for your feedback!");
     } catch (error) {
-      toast.error("Failed to submit feedback");
+      const message = error instanceof Error ? error.message : "Failed to submit feedback";
+      toast.error(message);
     }
   };
 
   const handleCheckLiveStatus = async () => {
-    if (!selectedStation || !routes) return;
+    if (!selectedStation) {
+      toast.error("Station details not loaded yet. Please wait a moment.");
+      return;
+    }
+    if (!routes) {
+      toast.error("Train lines are still loading. Please try again shortly.");
+      return;
+    }
 
     setIsLoadingAI(true);
     setAiStatus(null);
 
     try {
       const route = routes.find((r) => r._id === selectedStation.routeId);
+      if (!route) {
+        toast.error("Selected route not found. Please reselect your line.");
+        return;
+      }
+
       const result = await checkLiveStatus({
         routeName: route?.name ?? "Unknown Line",
         stationName: selectedStation.name,
@@ -73,7 +89,10 @@ export default function Dashboard() {
       setAiStatus(result);
       toast.success("AI status updated!");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch AI status";
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to fetch AI status. Please try again.";
       toast.error(message);
       setAiStatus(null);
     } finally {
