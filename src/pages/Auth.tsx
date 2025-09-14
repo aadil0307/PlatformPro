@@ -30,6 +30,9 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [otpError, setOtpError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -37,14 +40,29 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
       navigate(redirect);
     }
   }, [authLoading, isAuthenticated, navigate, redirectAfterAuth]);
+
+  const isValidEmail = (val: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    // Validate email format
+    if (!isValidEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      setIsLoading(false);
+      return;
+    }
+    setEmailError(null);
+
     try {
-      const formData = new FormData(event.currentTarget);
+      // Use controlled email value
+      const formData = new FormData();
+      formData.append("email", email.trim());
       await signIn("email-otp", formData);
-      setStep({ email: formData.get("email") as string });
+      setStep({ email: email.trim() });
       setIsLoading(false);
     } catch (error) {
       console.error("Email sign-in error:", error);
@@ -61,6 +79,15 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+    setOtpError(null);
+
+    // Validate OTP: must be exactly 6 digits
+    if (!/^\d{6}$/.test(otp)) {
+      setOtpError("Enter the 6-digit code sent to your email.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
@@ -132,16 +159,28 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         name="email"
                         placeholder="name@example.com"
                         type="email"
-                        className="pl-9"
+                        className={`pl-9 ${emailError ? "border-red-500" : ""}`}
                         disabled={isLoading}
                         required
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          if (emailError) setEmailError(null);
+                        }}
+                        onBlur={() => {
+                          if (email && !isValidEmail(email)) {
+                            setEmailError("Please enter a valid email address.");
+                          }
+                        }}
+                        aria-invalid={!!emailError}
+                        aria-describedby={emailError ? "email-error" : undefined}
                       />
                     </div>
                     <Button
                       type="submit"
                       variant="outline"
                       size="icon"
-                      disabled={isLoading}
+                      disabled={isLoading || (email.length > 0 && !isValidEmail(email))}
                     >
                       {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -150,6 +189,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       )}
                     </Button>
                   </div>
+                  {emailError && (
+                    <p id="email-error" className="mt-2 text-sm text-red-500">
+                      {emailError}
+                    </p>
+                  )}
                   {error && (
                     <p className="mt-2 text-sm text-red-500">{error}</p>
                   )}
@@ -196,12 +240,16 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <div className="flex justify-center">
                     <InputOTP
                       value={otp}
-                      onChange={setOtp}
+                      onChange={(val) => {
+                        // enforce digits only
+                        const digits = val.replace(/[^0-9]/g, "");
+                        setOtp(digits);
+                        if (otpError) setOtpError(null);
+                      }}
                       maxLength={6}
                       disabled={isLoading}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && otp.length === 6 && !isLoading) {
-                          // Find the closest form and submit it
+                        if (e.key === "Enter" && /^\d{6}$/.test(otp) && !isLoading) {
                           const form = (e.target as HTMLElement).closest("form");
                           if (form) {
                             form.requestSubmit();
@@ -216,6 +264,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       </InputOTPGroup>
                     </InputOTP>
                   </div>
+                  {otpError && (
+                    <p className="mt-2 text-sm text-red-500 text-center">
+                      {otpError}
+                    </p>
+                  )}
                   {error && (
                     <p className="mt-2 text-sm text-red-500 text-center">
                       {error}
