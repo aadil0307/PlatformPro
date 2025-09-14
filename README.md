@@ -1,21 +1,46 @@
+# Platform Pro 🚂 - Mumbai Local Train Navigator
+
 ## Overview
 
+**Platform Pro** is a smart Mumbai local train navigation app that helps commuters find optimal platform positions and coach selections for their journey. Built with modern web technologies, it provides real-time AI-powered train status updates and precise coach recommendations.
+
+### ✨ Key Features
+- **Smart Platform Guide**: Find exact platform and coach for your destination
+- **AI-Powered Updates**: Real-time train status and crowd information
+- **Route Planning**: Support for Western, Central, and Harbour lines
+- **Coach Optimization**: Recommendations for General, Ladies, and First Class
+- **Bridge Navigation**: Special guidance for major interchange stations
+- **User Feedback**: Crowd-sourced verification system
+- **Progressive Web App**: Works offline with PWA capabilities
+
 This project uses the following tech stack:
-- Vite
-- Typescript
-- React Router v7 (all imports from `react-router` instead of `react-router-dom`)
-- React 19 (for frontend components)
-- Tailwind v4 (for styling)
-- Shadcn UI (for UI components library)
-- Lucide Icons (for icons)
-- Convex (for backend & database)
-- Convex Auth (for authentication)
-- Framer Motion (for animations)
-- Three js (for 3d models)
+## Tech Stack
+
+- **Frontend**: Vite + React 19 + TypeScript
+- **Routing**: React Router v7 (all imports from `react-router` instead of `react-router-dom`)
+- **Styling**: Tailwind CSS v4 + Shadcn UI components
+- **Icons**: Lucide React icons
+- **Backend**: Convex (serverless backend & database)
+- **Authentication**: Convex Auth with email OTP and anonymous users
+- **AI Integration**: OpenRouter API with intelligent fallbacks
+- **Animations**: Framer Motion
+- **3D Graphics**: Three.js (for 3D models)
+- **Progressive Web App**: Service Worker + Manifest
 
 All relevant files live in the 'src' directory.
 
 Use pnpm for the package manager.
+
+## Current Status ✅
+
+**Latest Updates (September 14, 2025):**
+- ✅ Fixed dropdown functionality with enhanced UI/UX
+- ✅ Implemented AI-powered live train status with intelligent fallbacks  
+- ✅ Added comprehensive Mumbai train route data (Western, Central, Harbour)
+- ✅ Enhanced authentication system with proper JWT configuration
+- ✅ Improved responsive design and glassmorphism UI
+- ✅ Added loading states and error handling throughout the app
+- ✅ PWA capabilities with offline support
 
 ## Setup
 
