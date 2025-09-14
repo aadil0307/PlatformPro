@@ -10,6 +10,7 @@ import { Train, MapPin, Users, Crown, ThumbsUp, ThumbsDown, Loader2, Sparkles, N
 import { useState } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 type CoachType = "general" | "ladies" | "firstClass";
 
@@ -249,128 +250,151 @@ export default function Dashboard() {
           </Card>
         </motion.div>
 
-        {/* Results Section */}
-        <AnimatePresence>
-          {showResults && selectedStation && (
+        {/* Results Modal */}
+        <Dialog open={showResults && !!selectedStation} onOpenChange={setShowResults}>
+          <DialogContent className="max-w-md w-[95%] p-0 backdrop-blur-xl bg-white/10 border-white/20">
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              initial={{ opacity: 0, y: 20, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25 }}
+              className="rounded-xl overflow-hidden"
             >
-              <Card className="backdrop-blur-lg bg-white/10 border-white/20 shadow-2xl">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Sparkles className="h-5 w-5" />
-                    Your Optimal Spot
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Platform Info */}
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-white mb-2">
-                      {selectedStation.platformInfo}
-                    </div>
+              <DialogHeader className="p-5 border-b border-white/15">
+                <DialogTitle className="text-white flex items-center gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  Your Optimal Spot
+                </DialogTitle>
+                <DialogDescription className="text-white/70">
+                  Best coach and platform details tailored to your destination
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="p-5 space-y-6">
+                {/* Platform Info */}
+                <div className="text-center">
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 }}
+                    className="text-3xl font-bold text-white mb-2"
+                  >
+                    {selectedStation?.platformInfo}
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
                     <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2">
-                      Best Coach: {selectedStation.exitCoaches[coachType]}
+                      Best Coach: {selectedStation?.exitCoaches[coachType]}
                     </Badge>
-                  </div>
+                  </motion.div>
+                </div>
 
-                  <Separator className="bg-white/20" />
+                <Separator className="bg-white/20" />
 
-                  {/* Pro Tip */}
-                  <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-                    <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
-                      Pro Tip
-                    </h4>
-                    <p className="text-white/90 text-sm leading-relaxed">
-                      {selectedStation.bridgeInfo}
-                    </p>
-                  </div>
+                {/* Pro Tip */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.12 }}
+                  className="bg-white/10 rounded-lg p-4 border border-white/20"
+                >
+                  <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Pro Tip
+                  </h4>
+                  <p className="text-white/90 text-sm leading-relaxed">
+                    {selectedStation?.bridgeInfo}
+                  </p>
+                </motion.div>
 
-                  {/* Verification Section */}
-                  <div className="bg-white/10 rounded-lg p-4 border border-white/20">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-white/90 text-sm">Was this info correct?</span>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={handleVerifyHelpful}
-                          className="text-white hover:bg-white/20 p-2"
-                        >
-                          <ThumbsUp className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-white hover:bg-white/20 p-2"
-                        >
-                          <ThumbsDown className="h-4 w-4" />
-                        </Button>
-                      </div>
+                {/* Verification Section */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.14 }}
+                  className="bg-white/10 rounded-lg p-4 border border-white/20"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white/90 text-sm">Was this info correct?</span>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleVerifyHelpful}
+                        className="text-white hover:bg-white/20 p-2"
+                      >
+                        <ThumbsUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-white hover:bg-white/20 p-2"
+                      >
+                        <ThumbsDown className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <div className="text-center">
-                      <span className="text-green-300 text-sm">
-                        ✅ {selectedStation.verifiedCount} commuters found this helpful
-                      </span>
-                    </div>
                   </div>
-
-                  {/* AI Live Status */}
-                  <div className="space-y-3">
-                    <Button
-                      onClick={handleCheckLiveStatus}
-                      disabled={isLoadingAI}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                    >
-                      {isLoadingAI ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Getting AI Update...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="mr-2 h-4 w-4" />
-                          Check Live Status 🤖
-                        </>
-                      )}
-                    </Button>
-
-                    <AnimatePresence>
-                      {isLoadingAI && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="bg-white/10 rounded-lg p-4 border border-white/20"
-                        >
-                          <div className="flex items-center gap-2 text-white/90">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            <span className="text-sm">Asking our AI for real-time updates...</span>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {aiStatus && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg p-4 border border-blue-300/30"
-                        >
-                          <p className="text-white text-sm leading-relaxed">
-                            {aiStatus}
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                  <div className="text-center">
+                    <span className="text-green-300 text-sm">
+                      ✅ {selectedStation?.verifiedCount} commuters found this helpful
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
+                </motion.div>
+
+                {/* AI Live Status */}
+                <div className="space-y-3">
+                  <Button
+                    onClick={handleCheckLiveStatus}
+                    disabled={isLoadingAI}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                  >
+                    {isLoadingAI ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Getting AI Update...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Check Live Status 🤖
+                      </>
+                    )}
+                  </Button>
+
+                  <AnimatePresence>
+                    {isLoadingAI && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-white/10 rounded-lg p-4 border border-white/20"
+                      >
+                        <div className="flex items-center gap-2 text-white/90">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-sm">Asking our AI for real-time updates...</span>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {aiStatus && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg p-4 border border-blue-300/30"
+                      >
+                        <p className="text-white text-sm leading-relaxed">
+                          {aiStatus}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </DialogContent>
+        </Dialog>
 
         {/* Initial State Message */}
         {!showResults && (
