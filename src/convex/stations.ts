@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getStationsByRoute = query({
   args: { routeId: v.id("routes") },
@@ -40,11 +41,11 @@ export const addStationFeedback = mutation({
   },
   handler: async (ctx, args) => {
     // Get current user (optional for anonymous users)
-    const userId = await ctx.auth.getUserIdentity();
-    
+    const userId = await getAuthUserId(ctx);
+
     await ctx.db.insert("stationFeedback", {
       stationId: args.stationId,
-      userId: userId?.subject as any,
+      userId: userId ?? undefined,
       isHelpful: args.isHelpful,
       timestamp: Date.now(),
     });

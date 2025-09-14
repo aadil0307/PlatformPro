@@ -38,7 +38,7 @@ const schema = defineSchema(
       code: v.string(), // "WR", "CR", "HR"
       color: v.string(), // hex color for the line
       isActive: v.boolean(),
-    }),
+    }).index("by_isActive", ["isActive"]),
 
     // Stations for each route
     stations: defineTable({

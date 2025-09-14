@@ -8,7 +8,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { motion, AnimatePresence } from "framer-motion";
 import { Train, MapPin, Users, Crown, ThumbsUp, ThumbsDown, Loader2, Sparkles, Navigation } from "lucide-react";
 import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { toast } from "sonner";
 
 type CoachType = "general" | "ladies" | "firstClass";
@@ -33,6 +33,7 @@ export default function Dashboard() {
 
   const incrementVerified = useMutation(api.stations.incrementVerifiedCount);
   const addFeedback = useMutation(api.stations.addStationFeedback);
+  const checkLiveStatus = useAction(api.ai.checkLiveStatus);
 
   const handleFindSpot = () => {
     if (!selectedStationId) {
@@ -58,24 +59,26 @@ export default function Dashboard() {
 
   const handleCheckLiveStatus = async () => {
     if (!selectedStation || !routes) return;
-    
+
     setIsLoadingAI(true);
-    const route = routes.find(r => r._id === selectedStation.routeId);
-    
-    // Simulate AI response (in real app, this would call Gemini API)
-    setTimeout(() => {
-      const responses = [
-        `AI Update: ${route?.name} is running on time. Normal crowd levels expected at ${selectedStation.name}. Best time to board: Next 10 minutes.`,
-        `AI Update: Minor delays (5-10 mins) reported on ${route?.name} towards ${selectedStation.name} due to signal issues at previous station. Plan accordingly.`,
-        `AI Update: Heavy rush hour traffic on ${route?.name}. Consider using coach ${selectedStation.exitCoaches[coachType]} for faster exit at ${selectedStation.name}.`,
-        `AI Update: ${route?.name} services are running smoothly. ${selectedStation.name} platform is moderately crowded. Optimal boarding window available.`,
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      setAiStatus(randomResponse);
-      setIsLoadingAI(false);
+    setAiStatus(null);
+
+    try {
+      const route = routes.find((r) => r._id === selectedStation.routeId);
+      const result = await checkLiveStatus({
+        routeName: route?.name ?? "Unknown Line",
+        stationName: selectedStation.name,
+        coachType,
+      });
+      setAiStatus(result);
       toast.success("AI status updated!");
-    }, 2000);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to fetch AI status";
+      toast.error(message);
+      setAiStatus(null);
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const getCoachTypeLabel = (type: CoachType) => {

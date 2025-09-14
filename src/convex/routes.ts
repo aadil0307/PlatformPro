@@ -5,7 +5,7 @@ export const getAllRoutes = query({
   handler: async (ctx) => {
     return await ctx.db
       .query("routes")
-      .filter((q) => q.eq(q.field("isActive"), true))
+      .withIndex("by_isActive", (q) => q.eq("isActive", true))
       .collect();
   },
 });
