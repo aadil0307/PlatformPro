@@ -356,13 +356,22 @@ export default function Dashboard() {
                     setSelectedStationId(null);
                     setShowResults(false);
                   }}
+                  disabled={!routes || routes.length === 0}
                 >
                   <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm focus:ring-2 focus:ring-indigo-300/40 focus:border-white/40 hover:bg-white/25 transition">
-                    <SelectValue placeholder="Select train line" />
+                    <SelectValue placeholder={
+                      !routes ? "Loading train lines..." : 
+                      routes.length === 0 ? "No train lines available" :
+                      "Select train line"
+                    } />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white/95 backdrop-blur-md border-white/20">
                     {routes?.map((route) => (
-                      <SelectItem key={route._id} value={route._id}>
+                      <SelectItem 
+                        key={route._id} 
+                        value={route._id}
+                        className="hover:bg-white/10 focus:bg-white/20"
+                      >
                         <div className="flex items-center gap-2">
                           <div 
                             className="w-3 h-3 rounded-full" 
@@ -386,14 +395,23 @@ export default function Dashboard() {
                     setShowResults(false);
                     setSelectedBridge(null); // reset bridge until station loads
                   }}
-                  disabled={!selectedRouteId}
+                  disabled={!selectedRouteId || !stations || stations.length === 0}
                 >
                   <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm focus:ring-2 focus:ring-indigo-300/40 focus:border-white/40 hover:bg-white/25 transition">
-                    <SelectValue placeholder="Select destination" />
+                    <SelectValue placeholder={
+                      !selectedRouteId ? "Select train line first" :
+                      !stations ? "Loading stations..." :
+                      stations.length === 0 ? "No stations available" :
+                      "Select destination"
+                    } />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white/95 backdrop-blur-md border-white/20">
                     {stations?.map((station) => (
-                      <SelectItem key={station._id} value={station._id}>
+                      <SelectItem 
+                        key={station._id} 
+                        value={station._id}
+                        className="hover:bg-white/10 focus:bg-white/20"
+                      >
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4" />
                           {station.name}
@@ -424,9 +442,13 @@ export default function Dashboard() {
                           <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm focus:ring-2 focus:ring-indigo-300/40 focus:border-white/40 hover:bg-white/25 transition">
                             <SelectValue placeholder="Select bridge" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white/95 backdrop-blur-md border-white/20">
                             {bridges.map((b) => (
-                              <SelectItem key={b} value={b}>
+                              <SelectItem 
+                                key={b} 
+                                value={b}
+                                className="hover:bg-white/10 focus:bg-white/20"
+                              >
                                 {b}
                               </SelectItem>
                             ))}
