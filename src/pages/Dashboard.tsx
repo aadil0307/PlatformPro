@@ -7,7 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { motion, AnimatePresence } from "framer-motion";
 import { Train, MapPin, Users, Crown, ThumbsUp, ThumbsDown, Loader2, Sparkles, Navigation, Home, Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useAction } from "convex/react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -24,6 +24,22 @@ export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
   const [aiStatus, setAiStatus] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+
+  // Add: lightweight engagement + celebration states
+  const [streak, setStreak] = useState<number>(0);
+  const [lastUsedDate, setLastUsedDate] = useState<string | null>(null);
+  const [tipIndex, setTipIndex] = useState<number>(0);
+  const [celebrate, setCelebrate] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Initialize streak + date
+    const s = Number(localStorage.getItem("pp_streak") || "0");
+    const d = localStorage.getItem("pp_last_used");
+    setStreak(Number.isFinite(s) ? s : 0);
+    setLastUsedDate(d);
+    // Rotate tips
+    setTipIndex(Math.floor(Math.random() * 6)); // match tips array length below
+  }, []);
 
   const routes = useQuery(api.routes.getAllRoutes);
   const stations = useQuery(
@@ -44,8 +60,24 @@ export default function Dashboard() {
       toast.error("Please select a destination station");
       return;
     }
+    // Streak tracking: increments only on a new day
+    const today = new Date().toDateString();
+    let nextStreak = streak;
+    if (lastUsedDate !== today) {
+      nextStreak = streak + 1;
+      setStreak(nextStreak);
+      setLastUsedDate(today);
+      localStorage.setItem("pp_streak", String(nextStreak));
+      localStorage.setItem("pp_last_used", today);
+      if ([3, 5, 10, 25].includes(nextStreak)) {
+        toast.success(`🔥 Streak ${nextStreak}! You're on a roll!`);
+      }
+    }
+
     setShowResults(true);
     setAiStatus(null);
+    setCelebrate(true);
+    setTimeout(() => setCelebrate(false), 1400);
     toast.success("Found your optimal spot!");
   };
 
@@ -120,8 +152,45 @@ export default function Dashboard() {
     }
   };
 
+  // Simple rotating tips for micro-engagement
+  const tips = [
+    "Save time: stand near the exit side of your destination platform.",
+    "Off-peak sweet spot: 11am–4pm is usually lighter crowd.",
+    "Bookmark your frequent route for quicker planning.",
+    "Ladies coach near mid-section is often less crowded off-peak.",
+    "Arrive 2–3 mins early for best boarding window.",
+    "Use Pro Tip to align with bridges and fastest exits.",
+  ] as const;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 relative overflow-hidden">
+      {/* Celebration overlay: quick emoji burst */}
+      <AnimatePresence>
+        {celebrate && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none fixed inset-0 z-[60] flex items-start justify-center pt-20"
+          >
+            <div className="relative">
+              {[ "🎉","✨","🚆","🌟","🎊" ].map((emo, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ y: 10, opacity: 0, scale: 0.8 }}
+                  animate={{ y: -20 - i * 8, opacity: 1, scale: 1 }}
+                  exit={{ y: -40 - i * 12, opacity: 0 }}
+                  transition={{ duration: 0.8 + i * 0.05, ease: "easeOut" }}
+                  className="mx-1 text-2xl"
+                >
+                  {emo}
+                </motion.span>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Glassmorphism background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
@@ -210,6 +279,30 @@ export default function Dashboard() {
           </p>
         </motion.div>
 
+        {/* Tip + streak banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="mb-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md px-4 py-3"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-yellow-300" />
+              <span className="text-white/90 text-sm">{tips[tipIndex]}</span>
+            </div>
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="flex items-center gap-1 rounded-lg bg-white/20 px-2 py-1"
+              title="Daily use streak"
+            >
+              <span className="text-lg">🔥</span>
+              <span className="text-white text-sm font-semibold">{streak}</span>
+            </motion.div>
+          </div>
+        </motion.div>
+
         {/* Controls Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -286,12 +379,15 @@ export default function Dashboard() {
                 <label className="text-white/90 text-sm font-medium">Coach Type</label>
                 <div className="grid grid-cols-3 gap-3">
                   {(["general", "ladies", "firstClass"] as CoachType[]).map((type) => (
-                    <button
+                    <motion.button
                       key={type}
                       onClick={() => setCoachType(type)}
+                      whileTap={{ scale: 0.95 }}
+                      animate={{ scale: coachType === type ? 1.03 : 1 }}
+                      transition={{ type: "spring", stiffness: 260, damping: 20 }}
                       className={`py-3 px-2 rounded-lg border backdrop-blur-sm transition-all ${
                         coachType === type
-                          ? "bg-white/30 border-white/50 text-white"
+                          ? "bg-white/30 border-white/50 text-white shadow-inner"
                           : "bg-white/10 border-white/20 text-white/80 hover:bg-white/20"
                       }`}
                     >
@@ -301,20 +397,22 @@ export default function Dashboard() {
                           {getCoachTypeLabel(type)}
                         </span>
                       </div>
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
 
               {/* Find My Spot Button */}
-              <Button
-                onClick={handleFindSpot}
-                disabled={!selectedStationId}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 text-lg shadow-lg"
-              >
-                <Train className="mr-2 h-5 w-5" />
-                Find My Spot
-              </Button>
+              <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  onClick={handleFindSpot}
+                  disabled={!selectedStationId}
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 text-lg shadow-lg"
+                >
+                  <Train className="mr-2 h-5 w-5" />
+                  Find My Spot
+                </Button>
+              </motion.div>
             </CardContent>
           </Card>
         </motion.div>
