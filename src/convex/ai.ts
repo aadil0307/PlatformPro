@@ -19,6 +19,20 @@ export const checkLiveStatus = action({
       throw new Error("OpenRouter API key not configured. Please add OPENROUTER_API_KEY in Integrations.");
     }
 
+    // Add: allow model override via env, default to a fast/free option
+    const model =
+      process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-thinking-exp:free";
+
+    // Add: optional headers for OpenRouter rankings
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "X-Title": "Platform Pro",
+    };
+    if (process.env.SITE_URL) {
+      headers["HTTP-Referer"] = process.env.SITE_URL;
+    }
+
     const system =
       "You are an assistant providing concise, commuter-friendly live status updates for Mumbai local trains. " +
       "Be brief, actionable, and specific. If uncertain, state likelihoods and give practical guidance.";
@@ -38,13 +52,10 @@ Keep it to 1-2 sentences, friendly tone, no markdown.
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({
-        // Choose a solid, general model; can be changed later from UI/config
-        model: "google/gemini-2.0-flash-thinking-exp:free",
+        // Replace: use env-configurable model
+        model,
         messages: [
           { role: "system", content: system },
           { role: "user", content: userPrompt },
