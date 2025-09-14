@@ -15,6 +15,14 @@ import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .catch((err) => console.error("SW registration failed:", err));
+  });
+}
+
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
