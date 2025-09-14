@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
-import { Train, MapPin, Clock, Users, Sparkles, Navigation, ArrowRight } from "lucide-react";
+import { Train, MapPin, Clock, Users, Sparkles, Navigation, ArrowRight, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router";
 
 export default function Landing() {
@@ -35,6 +36,96 @@ export default function Landing() {
       </div>
 
       <div className="relative z-10 container mx-auto px-3 py-8 md:py-12 max-w-4xl">
+        {/* Navbar */}
+        <div className="mb-6 md:mb-8">
+          <div className="mx-auto max-w-4xl">
+            <div className="flex items-center justify-between rounded-xl border border-white/20 bg-white/10 backdrop-blur-md px-3 py-2">
+              <button
+                onClick={() => navigate("/")}
+                className="flex items-center gap-2 text-white hover:text-white/90"
+                aria-label="Go to home"
+              >
+                <Train className="h-5 w-5" />
+                <span className="font-semibold tracking-tight">Platform Pro</span>
+              </button>
+
+              {/* Desktop actions */}
+              <div className="hidden md:flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:bg-white/20"
+                  onClick={() => navigate("/")}
+                >
+                  Home
+                </Button>
+                {isAuthenticated ? (
+                  <Button
+                    variant="secondary"
+                    className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    Dashboard
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    onClick={() => navigate("/auth")}
+                  >
+                    Get Started
+                  </Button>
+                )}
+              </div>
+
+              {/* Mobile menu */}
+              <div className="md:hidden">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="text-white hover:bg-white/20"
+                      aria-label="Open menu"
+                    >
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="right"
+                    className="backdrop-blur-xl bg-white/10 border-white/20"
+                  >
+                    <div className="mt-8 flex flex-col gap-2">
+                      <Button
+                        variant="ghost"
+                        className="justify-start text-white hover:bg-white/20"
+                        onClick={() => navigate("/")}
+                      >
+                        Home
+                      </Button>
+                      {isAuthenticated ? (
+                        <Button
+                          variant="ghost"
+                          className="justify-start text-white hover:bg-white/20"
+                          onClick={() => navigate("/dashboard")}
+                        >
+                          Dashboard
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          className="justify-start text-white hover:bg-white/20"
+                          onClick={() => navigate("/auth")}
+                        >
+                          Get Started
+                        </Button>
+                      )}
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
