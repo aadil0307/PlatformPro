@@ -20,19 +20,19 @@ export default function Landing() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800">
         <div className="text-white text-xl">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 relative overflow-hidden">
       {/* Glassmorphism background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-300/15 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-cyan-300/10 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-3 py-8 md:py-12 max-w-4xl">
@@ -175,7 +175,7 @@ export default function Landing() {
             <Button
               onClick={handleGetStarted}
               size="lg"
-              className="w-full md:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all duration-200"
+              className="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg shadow-2xl transform hover:scale-105 transition-all duration-200"
             >
               {isAuthenticated ? (
                 <>
@@ -201,22 +201,22 @@ export default function Landing() {
         >
           {[
             {
-              icon: <MapPin className="h-8 w-8 text-blue-400" />,
+              icon: <MapPin className="h-8 w-8 text-sky-400" />,
               title: "Smart Platform Guide",
               description: "Find the exact platform and coach for your destination"
             },
             {
-              icon: <Clock className="h-8 w-8 text-green-400" />,
+              icon: <Clock className="h-8 w-8 text-emerald-400" />,
               title: "Real-time Updates",
               description: "AI-powered live status and delay information"
             },
             {
-              icon: <Users className="h-8 w-8 text-purple-400" />,
+              icon: <Users className="h-8 w-8 text-indigo-300" />,
               title: "Crowd-sourced Tips",
               description: "Verified by thousands of daily commuters"
             },
             {
-              icon: <Sparkles className="h-8 w-8 text-yellow-400" />,
+              icon: <Sparkles className="h-8 w-8 text-amber-300" />,
               title: "Pro Tips",
               description: "Insider knowledge for faster exits and connections"
             }
@@ -310,7 +310,7 @@ export default function Landing() {
               <Button
                 onClick={handleGetStarted}
                 size="lg"
-                className="w-full md:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-8 py-4 text-lg shadow-xl"
+                className="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg shadow-xl"
               >
                 {isAuthenticated ? (
                   <>
