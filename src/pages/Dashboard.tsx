@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [showResults, setShowResults] = useState(false);
   const [aiStatus, setAiStatus] = useState<string | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [selectedBridge, setSelectedBridge] = useState<string | null>(null);
 
   // Add: lightweight engagement + celebration states
   const [streak, setStreak] = useState<number>(0);
@@ -41,6 +42,8 @@ export default function Dashboard() {
     setTipIndex(Math.floor(Math.random() * 6)); // match tips array length below
   }, []);
 
+  // Bridge selection effect moved below after selectedStation is declared
+
   const routes = useQuery(api.routes.getAllRoutes);
   const stations = useQuery(
     api.stations.getStationsByRoute,
@@ -50,6 +53,20 @@ export default function Dashboard() {
     api.stations.getStationById,
     selectedStationId ? { stationId: selectedStationId } : "skip"
   );
+
+  // Sync bridge selection when selectedStation changes (after selectedStation is declared)
+  useEffect(() => {
+    if (!selectedStation) {
+      setSelectedBridge(null);
+      return;
+    }
+    const keys = Object.keys((selectedStation as any).bridgeData ?? {});
+    if (keys.length > 0) {
+      setSelectedBridge((prev) => (prev && keys.includes(prev) ? prev : keys[0]));
+    } else {
+      setSelectedBridge(null);
+    }
+  }, [selectedStation]);
 
   const incrementVerified = useMutation(api.stations.incrementVerifiedCount);
   const addFeedback = useMutation(api.stations.addStationFeedback);
@@ -355,6 +372,7 @@ export default function Dashboard() {
                   onValueChange={(value) => {
                     setSelectedStationId(value as Id<"stations">);
                     setShowResults(false);
+                    setSelectedBridge(null); // reset bridge until station loads
                   }}
                   disabled={!selectedRouteId}
                 >
@@ -372,6 +390,41 @@ export default function Dashboard() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Preferred Exit Bridge Selection (if available) */}
+              <div className="space-y-2">
+                {(() => {
+                  const bridges = Object.keys((selectedStation as any)?.bridgeData ?? {});
+                  if (bridges.length > 0 && selectedBridge) {
+                    return (
+                      <>
+                        <label className="text-white/90 text-sm font-medium">
+                          Preferred Exit Bridge
+                        </label>
+                        <Select
+                          value={selectedBridge}
+                          onValueChange={(value) => {
+                            setSelectedBridge(value);
+                            setShowResults(false);
+                          }}
+                        >
+                          <SelectTrigger className="h-12 bg-white/20 border-white/30 text-white backdrop-blur-sm">
+                            <SelectValue placeholder="Select bridge" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {bridges.map((b) => (
+                              <SelectItem key={b} value={b}>
+                                {b}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </>
+                    );
+                  }
+                  return null;
+                })()}
               </div>
 
               {/* Coach Type Selection */}
@@ -445,7 +498,13 @@ export default function Dashboard() {
                     transition={{ delay: 0.05 }}
                     className="text-3xl font-bold text-white mb-2"
                   >
-                    {selectedStation?.platformInfo}
+                    {(() => {
+                      const bd = (selectedStation as any)?.bridgeData;
+                      const p =
+                        (selectedBridge && bd?.[selectedBridge]?.platformInfo) ||
+                        selectedStation?.platformInfo;
+                      return p;
+                    })()}
                   </motion.div>
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
@@ -453,7 +512,19 @@ export default function Dashboard() {
                     transition={{ delay: 0.1 }}
                   >
                     <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2">
-                      Best Coach: {selectedStation?.exitCoaches[coachType]}
+                      {(() => {
+                        const bd = (selectedStation as any)?.bridgeData;
+                        const coaches =
+                          (selectedBridge && bd?.[selectedBridge]?.exitCoaches) ||
+                          selectedStation?.exitCoaches;
+                        const best = coaches ? coaches[coachType] : "—";
+                        return (
+                          <>
+                            Best Coach: {best}
+                            {selectedBridge ? ` • ${selectedBridge}` : ""}
+                          </>
+                        );
+                      })()}
                     </Badge>
                   </motion.div>
                 </div>
@@ -472,7 +543,13 @@ export default function Dashboard() {
                     Pro Tip
                   </h4>
                   <p className="text-white/90 text-sm leading-relaxed">
-                    {selectedStation?.bridgeInfo}
+                    {(() => {
+                      const bd = (selectedStation as any)?.bridgeData;
+                      const tip =
+                        (selectedBridge && bd?.[selectedBridge]?.tip) ||
+                        selectedStation?.bridgeInfo;
+                      return tip;
+                    })()}
                   </p>
                 </motion.div>
 

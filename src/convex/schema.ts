@@ -52,6 +52,21 @@ const schema = defineSchema(
         firstClass: v.number(), // best coach for first class
       }),
       bridgeInfo: v.string(), // pro tip about exits/connections
+      // Add: optional bridge-specific data map for major stations (backward compatible)
+      bridgeData: v.optional(
+        v.record(
+          v.string(),
+          v.object({
+            exitCoaches: v.object({
+              general: v.number(),
+              ladies: v.number(),
+              firstClass: v.number(),
+            }),
+            tip: v.string(),
+            platformInfo: v.optional(v.string()),
+          }),
+        ),
+      ),
       verifiedCount: v.number(), // crowd-sourced verification count
       order: v.number(), // station order on the line
     }).index("by_route", ["routeId"]),

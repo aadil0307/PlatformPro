@@ -108,6 +108,18 @@ export const seedDatabase = mutation({
         platformInfo: "Platform 1 (Right Side)",
         exitCoaches: { general: 8, ladies: 2, firstClass: 12 },
         bridgeInfo: "Coach 8 provides fastest access to Central Line platforms and Dadar market.",
+        bridgeData: {
+          "West FOB": {
+            exitCoaches: { general: 8, ladies: 2, firstClass: 12 },
+            tip: "West FOB leads to Dadar West market and bus depot. Coach 8 aligns well.",
+            platformInfo: "Platform 1 (Right Side)",
+          },
+          "East FOB": {
+            exitCoaches: { general: 6, ladies: 2, firstClass: 10 },
+            tip: "East FOB is fastest for Central interchange; move forward by 2 coaches off-peak.",
+            platformInfo: "Platform 1 (Right Side)",
+          },
+        },
         order: 9,
       },
       {
@@ -184,6 +196,18 @@ export const seedDatabase = mutation({
         platformInfo: "Platform 2 (Left Side)",
         exitCoaches: { general: 7, ladies: 2, firstClass: 11 },
         bridgeInfo: "Coach 7 provides fastest connection to Western Line and Shivaji Park.",
+        bridgeData: {
+          "West FOB": {
+            exitCoaches: { general: 7, ladies: 2, firstClass: 11 },
+            tip: "West FOB connects quickly to Western platforms; stay mid for smoother interchange.",
+            platformInfo: "Platform 2 (Left Side)",
+          },
+          "East FOB": {
+            exitCoaches: { general: 5, ladies: 2, firstClass: 9 },
+            tip: "East FOB is better for Dadar East buses and markets; move forward by 2 coaches.",
+            platformInfo: "Platform 2 (Left Side)",
+          },
+        },
         order: 8,
       },
       {
